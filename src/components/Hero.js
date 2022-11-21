@@ -5,11 +5,16 @@ function Hero() {
   const [recipeData, setRecipeData] = useState([])
 
   useEffect(() => {
-    const key = config.MY_API_KEY
-    const url = `https://api.spoonacular.com/recipes/complexSearch?apiKey=${key}&cuisine=american`
-    fetch(url)
-      .then((res) => res.json())
-      .then((data) => setRecipeData(data.results))
+    async function getRecipeData() {
+      const key = config.MY_API_KEY
+      const url = `https://api.spoonacular.com/recipes/complexSearch?apiKey=${key}&cuisine=american`
+
+      const res = await fetch(url)
+      const data = await res.json()
+      setRecipeData(data.results)
+    }
+
+    getRecipeData()
   }, [])
 
 
@@ -18,7 +23,18 @@ function Hero() {
       <div className="hero-content flex-col lg:flex-row-reverse">
         <div className="text-center lg:text-left">
           <h1 className="text-5xl font-bold">Find your favorite recipes</h1>
-          <p className="py-6">{JSON.stringify(recipeData, null, 2)}</p>
+          <ul>
+            {
+                recipeData.map(recipe => {
+                    return (
+                        <li key={recipe.id}>
+                            {recipe.title}
+                            <img src={recipe.image} alt="" />
+                        </li>
+                    )
+                })
+            }
+          </ul>
         </div>
         <div className="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
           <div className="card-body">
